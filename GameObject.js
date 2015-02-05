@@ -117,16 +117,48 @@ var PlaneHero = function (x, y, speed, life) {
         }
     };
     this.Fire = function () {
-        single.setBulletHero(new BulletHero(this, 20, 'BulletHero'+(single.getBulletHeroCount()+1)));
+        single.setBulletHero(new BulletHero(this, 20, 'BulletHero' + (single.getBulletHeroCount() + 1)));
     };
 };
 
 //------------PlaneEnemy 类 ----------//
+var PlaneEnemy = function (x, y, type) {
+    this.Images = [
+        {
+            Width: 57,
+            Height: 43,
+            Url: 'Images/enemy1.png'
+        },
+        {
+            Width: 69,
+            Height: 99,
+            Url: 'Images/enemy2.png'
+        },
+        {
+            Width: 169,
+            Height: 258,
+            Url: 'Images/enemy3.png'
+        }
+    ];
+    this.Lifes = [1, 2, 3];
+    this.Speeds = [30, 25, 20];
+    this.Type = type;
+    PlaneParent.call(this, x, y, this.Speeds[type], this.Lifes[type], 'DOWN', this.Images[type], 'PlaneEnemy' + (single.getPlaneEnemyCount() + 1));
+    this.CoordinateSetting = function () {
+        this.Y += this.Speed;
+        if (this.Y >= global.Height) {
+            //remove object
+            this.removeObject();
+            single.removePlaneEnemy(this);
+        }
+    };
+};
 
 //------------BulletParent 类 ----------//
 var BulletParent = function (planeObject, image, speed, direction, name) {
     this.PlaneObject = planeObject;
     var startPointX, startPointY;
+    //ajust X Y to fix the bullet position
     if (direction === 'UP') {
         startPointX = planeObject.X + planeObject.Width / 2 - image.Width / 2;
         startPointY = planeObject.Y;
@@ -134,8 +166,6 @@ var BulletParent = function (planeObject, image, speed, direction, name) {
         startPointX = planeObject.X + planeObject.Width / 2;
         startPointY = planeObject.Y + planeObject.Height;
     }
-
-    //todo: modify x y to fix the bullet position
     GameObject.call(this, startPointX, startPointY, image.Width, image.Height, speed, 0, direction, name);
 };
 
@@ -150,13 +180,10 @@ var BulletHero = function (planeObject, speed, name) {
     this.CoordinateSetting = function () {
         this.Y -= this.Speed;
         if (this.Y <= -this.Height) {
-            //todo:remove this object
             this.removeObject();
             single.removeBullerHero(this);
-            //single
         }
     };
-    //this.
 };
 
 //------------BulletEnemy 类 ----------//
@@ -226,8 +253,6 @@ var GameLoadingStart = function (x, y) {
 
                 setTimeout(function () {
                     single.setPlaneHero(new PlaneHero(200, 500, 30, 8));
-                    //single.getPlaneHero().Fire();
-                    //more and more bullets 
                 }, 3000);
 
                 self.Status = 'Pause';
@@ -252,6 +277,6 @@ var GameLoadingStart = function (x, y) {
 
 
 ////----------test-------
-//var PH = new BulletHero(78, 87);
+//var PH = new PlaneEnemy(78, 87,0);
 ////var PH2 = new PlaneHero(789, 87, 10, 10);
 //console.log(PH);

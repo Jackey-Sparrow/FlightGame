@@ -62,12 +62,33 @@ var single = (function () {
     };
     service.removeBullerHero = function (bullet) {
         var index = _BulletHero.indexOf(bullet);
-        _BulletHero.splice(index, 1);
+        if (index != -1) {
+            _BulletHero.splice(index, 1);
+        }
+    };
 
+    //plane bullet
+    var _PlaneEnemy = [];
+    var _PlaneEnemyCount = 0;
+    service.getPlaneEnemy = function () {
+        return _PlaneEnemy;
+    };
+    service.setPlaneEnemy = function (planeEnemy) {
+        _PlaneEnemy.push(planeEnemy);
+        _PlaneEnemyCount++;
+    };
+    service.removePlaneEnemy = function (planeEnemy) {
+        var index = _PlaneEnemy.indexOf(planeEnemy);
+        if (index != -1) {
+            _PlaneEnemy.splice(index, 1);
+        }
+    };
+    service.getPlaneEnemyCount = function () {
+        return _PlaneEnemyCount;
     };
 
     //timer 
-    var _timer = null
+    var _timer = null;
     service.setTimer = function () {
         _timer = setInterval(function () {
             single.Draw();
@@ -91,6 +112,21 @@ var single = (function () {
 
         for (var i = 0; i < _BulletHero.length; i++) {
             _BulletHero[i].Draw();
+        }
+        for (var i = 0; i < _PlaneEnemy.length ; i++) {
+            _PlaneEnemy[i].Draw();
+        }
+        //add enemy plane
+        if (_PlaneHero) {
+            var enemyPlaneCount = this.getPlaneEnemyCount();
+            if (_PlaneEnemy.length <= 2) {
+                for (var i = 0; i <= 4; i++) {
+                    this.setPlaneEnemy(new PlaneEnemy(Math.random() * global.Width, -Math.random() * 200, parseInt(Math.random() * 2)));
+                }
+            }
+            if (Math.random() * 100 > 99) {
+                this.setPlaneEnemy(new PlaneEnemy(Math.random() * global.Width, -Math.random() * 200, 2));
+            }
         }
     };
 
