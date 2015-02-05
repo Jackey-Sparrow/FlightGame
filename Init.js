@@ -35,9 +35,6 @@ function InitalGame() {
 
 	//refresh method
 	//refresh every 1 second
-	//var timer = setInterval(function () {
-	//	single.Draw();
-	//}, 1000);
 	single.setTimer();
 }
 
