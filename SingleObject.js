@@ -56,6 +56,17 @@ var single = (function () {
 		_BulletHero.push(bulletHero);
 	};
 
+    //timer 
+	var _timer = null
+	service.setTimer = function () {
+	    _timer = setInterval(function () {
+	        single.Draw();
+	    }, 1000);
+	};
+	service.stopTimer = function () {
+	    clearInterval(_timer);
+	};
+
 	service.Draw = function () {
 		for (var i = 0; i < _Background.length; i++) {
 			_Background[i].Draw();
@@ -67,7 +78,7 @@ var single = (function () {
 			_GameLoadingFly.Draw();
 		}
 
-		for (var i = 0; i < _Background.length; i++) {
+		for (var i = 0; i < _BulletHero.length; i++) {
 			_BulletHero[i].Draw();
 		}
 	};

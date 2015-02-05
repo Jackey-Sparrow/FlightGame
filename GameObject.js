@@ -203,26 +203,40 @@ var GameLoadingStart = function (x, y) {
 		Height: 45,
 		Url: 'Images/start.png'
 	};
+	this.Status = 'FirstStart';
 	GameLoadingParent.call(this, x, y, this.Image, 'GameLoadingStart');
+	this.Stop = function () {
+	    single.stopTimer();
+	};
 	this.Start = function () {
-		$('#' + this.Name + '').click(function () {
-			//todo : after start , change the background to pause 
-			single.getGameLoadingCopyRight().removeObject();
-			single.setGameLoadingCopyRight(null);
-			single.getGameLoadingFly().removeObject();
-			single.setGameLoadingFly(null);
+	    var self = this;
+	    $('#' + this.Name + '').click(function () {
+	        if (self.Status === 'FirstStart') {
+	            //todo : after start , change the background to pause 
+	            single.getGameLoadingCopyRight().removeObject();
+	            single.setGameLoadingCopyRight(null);
+	            single.getGameLoadingFly().removeObject();
+	            single.setGameLoadingFly(null);
 
-			//after the gameLoading display and show the 
-			setTimeout(function () {
-				single.setPlaneHero(new PlaneHero(200, 500, 30, 8));
-				single.setBulletHero(new BulletHero(single.getPlaneHero(), 20, 'BulletHero1'));
-			}, 3000);
-
+	            //after the gameLoading display and show the 
+	            setTimeout(function () {
+	                single.setPlaneHero(new PlaneHero(200, 500, 30, 8));
+	                single.setBulletHero(new BulletHero(single.getPlaneHero(), 20, 'BulletHero1'));
+	            }, 3000);
+	            self.Status = 'Pause';
+	            $(this).css('background','url(Images/stop.png)');
+	        } else if(self.Status==='Pause'){
+	            self.Stop();
+	            $(this).css('background', 'url(Images/start.png)');
+	            self.Status = 'BackToGame';
+	        } else if (self.Status === 'BackToGame') {
+	            self.Status = 'Pause';
+	            $(this).css('background', 'url(Images/stop.png)');
+	            single.setTimer();
+	        }
 		});
 	};
-	this.Stop = function () {
-		//todo : Stop event
-	};
+	
 	this.removeEvent = function () {
 		$('#' + this.Name + '').click = null;
 	};

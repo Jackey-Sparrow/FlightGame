@@ -29,17 +29,16 @@ function InitalGame() {
 
 	single.getGameLoadingStart().Start();
 
-	
-	
 	//todo :hide planeHero ,start Game and init PlaneHero
 
 	//todo : the planeHero can move after the keyTouch event ,but it's not smooth
 
 	//refresh method
 	//refresh every 1 second
-	var timer = setInterval(function () {
-		single.Draw();
-	}, 1000);
+	//var timer = setInterval(function () {
+	//	single.Draw();
+	//}, 1000);
+	single.setTimer();
 }
 
 (function ($) {
