@@ -36,6 +36,17 @@ var GameMessager = (function () {
     }
 })();
 
+GameMessager.listen('GameInitial', function () {
+    single.setBackground(new Background(0, 0, 17, 'background1'));
+    single.setBackground(new Background(0, -global.Height, 17, 'background2'));
+
+    single.setGameLoadingFly(new GameLoadingFly(147, 420));
+    single.setGameLoadingCopyRight(new GameLoadingCopyRight(20, 175));
+    single.setGameLoadingStart(new GameLoadingStart(410, 800));
+
+    single.getGameLoadingStart().Start();
+});
+
 GameMessager.listen('FirstStart', function () {
     single.getGameLoadingCopyRight().removeObject();
     single.setGameLoadingCopyRight(null);
