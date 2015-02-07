@@ -1,4 +1,4 @@
-﻿//单例模式
+﻿//
 var single = (function () {
     var service = {};
 
