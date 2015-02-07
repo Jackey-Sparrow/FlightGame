@@ -246,15 +246,7 @@ var GameLoadingStart = function (x, y) {
         var self = this;
         $('#' + this.Name + '').click(function () {
             if (self.Status === 'FirstStart') {
-                single.getGameLoadingCopyRight().removeObject();
-                single.setGameLoadingCopyRight(null);
-                single.getGameLoadingFly().removeObject();
-                single.setGameLoadingFly(null);
-
-                setTimeout(function () {
-                    single.setPlaneHero(new PlaneHero(200, 500, 30, 8));
-                }, 3000);
-
+                GameMessager.trigger('FirstStart');
                 self.Status = 'Pause';
                 $(this).css('background', 'url(Images/stop.png)');
             } else if (self.Status === 'Pause') {
