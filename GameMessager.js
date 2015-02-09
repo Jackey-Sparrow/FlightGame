@@ -55,6 +55,7 @@ GameMessager.listen('FirstStart', function () {
 
     setTimeout(function () {
         single.setPlaneHero(new PlaneHero(200, 500, 30, 8));
+        single.setScoreScreen(new Score(0, 800, 'Score'));
     }, 3000);
 });
 

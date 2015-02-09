@@ -67,6 +67,26 @@ var single = (function () {
         }
     };
 
+    var _BoomPlaneEnemy = [];
+    var _BoomPlaneEnemyCount = 0;
+    service.getBoomPlaneEnemy = function () {
+        return _BoomPlaneEnemy;
+    };
+    service.setBoomPlaneEnemy = function (boomPlaneEnemy) {
+        _BoomPlaneEnemy.push(boomPlaneEnemy);
+        _BoomPlaneEnemyCount++;
+    };
+    service.getBoomPlaneEnemyCount = function () {
+        return _BoomPlaneEnemyCount;
+    };
+    service.removeBoomPlaneEnemy = function (boomPlaneEnemy) {
+        var index = _BoomPlaneEnemy.indexOf(boomPlaneEnemy);
+        if (index != -1) {
+            _BoomPlaneEnemy.splice(index, 1);
+            //delete
+        }
+    };
+
     //plane bullet
     var _PlaneEnemy = [];
     var _PlaneEnemyCount = 0;
@@ -87,11 +107,25 @@ var single = (function () {
         return _PlaneEnemyCount;
     };
 
+    var _Score = 0;
+    service.getScore = function () {
+        return _Score;
+    };
+
+    var _ScoreScreen = null;
+    service.setScoreScreen = function (scoreScreen) {
+        _ScoreScreen = scoreScreen;
+    };
+    service.getScoreScreen = function () {
+        return -_ScoreScreen;
+    };
+
     //timer 
     var _timer = null;
     service.setTimer = function () {
         _timer = setInterval(function () {
             single.Draw();
+            single.CrashDetection();
         }, 1000);
     };
     service.stopTimer = function () {
@@ -116,6 +150,15 @@ var single = (function () {
         for (var i = 0; i < _PlaneEnemy.length ; i++) {
             _PlaneEnemy[i].Draw();
         }
+
+        //_BoomPlaneEnemy
+        for (var i = 0; i < _BoomPlaneEnemy.length ; i++) {
+            _BoomPlaneEnemy[i].Draw();
+        }
+
+        if (_ScoreScreen) {
+            _ScoreScreen.Draw();
+        }
         //add enemy plane
         if (_PlaneHero) {
             var enemyPlaneCount = this.getPlaneEnemyCount();
@@ -130,10 +173,26 @@ var single = (function () {
         }
     };
 
-
     // todo :碰撞检测
     service.CrashDetection = function () {
-
+        //hero bullet and plane enemy
+        for (var i = 0; i < _BulletHero.length; i++) {
+            for (var j = 0; j < _PlaneEnemy.length; j++) {
+                if (GetCrashDection(_BulletHero[i], _PlaneEnemy[j])) {
+                    //crash 
+                    //敌机分数减少，如果分数为0，则播放爆炸图片
+                    _PlaneEnemy[j].Life -= _BulletHero[i].Power;
+                    //检测敌机是否还生存
+                    _PlaneEnemy[j].IsLive();
+                    //TODO:则播放爆炸图片
+                    //子弹消失
+                    single.removeBullerHero(_BulletHero[i]);
+                    //击中一次加一分
+                    _Score++;
+                    break;
+                }
+            }
+        }
     };
 
     return service;

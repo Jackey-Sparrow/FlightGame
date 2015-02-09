@@ -5,7 +5,7 @@ var global = {
     Width: 480,
     Height: 850
 };
-//version0.02 I abandon prototype and use 'this'	 2015.02.05
+//version0.03  2015.02.09
 // 游戏对象的基类
 function GameObject(x, y, width, height, speed, life, direction, name) {
 
@@ -68,6 +68,20 @@ var Background = function (x, y, speed, name) {
     };
 };
 
+//------------Score 类 ------------//
+var Score = function (x, y, name) {
+    this.Image = {
+        Width: 100,
+        Height: 50,
+        Url: ''
+    };
+
+    GameObject.call(this, x, y, this.Image.Width, this.Image.Height, 0, 0, 'DOWN', name);
+    this.CoordinateSetting = function () {
+        $('#' + this.Name + '').text('Score : ' + single.getScore());
+    };
+};
+
 //------------PlaneParent 类 ----------//
 var PlaneParent = function (x, y, speed, life, direction, image, name) {
     this.Image = image;
@@ -117,7 +131,7 @@ var PlaneHero = function (x, y, speed, life) {
         }
     };
     this.Fire = function () {
-        single.setBulletHero(new BulletHero(this, 20, 'BulletHero' + (single.getBulletHeroCount() + 1)));
+        single.setBulletHero(new BulletHero(this, 20, 1, 'BulletHero' + (single.getBulletHeroCount() + 1)));
     };
 };
 
@@ -152,11 +166,23 @@ var PlaneEnemy = function (x, y, type) {
             single.removePlaneEnemy(this);
         }
     };
+    this.IsLive = function () {
+        if (this.Life <= 0) {
+
+            this.removeObject();
+
+            single.removePlaneEnemy(this);
+            // 播放爆炸页面
+            single.setBoomPlaneEnemy(new BoomPlaneEnemy(this.Type, this, 'BoomPlaneEnemy' + single.getBoomPlaneEnemyCount()));
+            //移除爆炸页面对象
+        }
+    };
 };
 
 //------------BulletParent 类 ----------//
-var BulletParent = function (planeObject, image, speed, direction, name) {
+var BulletParent = function (planeObject, image, speed, direction, power, name) {
     this.PlaneObject = planeObject;
+    this.Power = power;
     var startPointX, startPointY;
     //ajust X Y to fix the bullet position
     if (direction === 'UP') {
@@ -170,13 +196,13 @@ var BulletParent = function (planeObject, image, speed, direction, name) {
 };
 
 //------------BulletHero 类 ----------//
-var BulletHero = function (planeObject, speed, name) {
+var BulletHero = function (planeObject, speed, power, name) {
     this.Image = {
         Width: 5,
         Height: 11,
         Url: 'Images/heroBullet.png'
     };
-    BulletParent.call(this, planeObject, this.Image, speed, 'UP', name)
+    BulletParent.call(this, planeObject, this.Image, speed, 'UP', power, name)
     this.CoordinateSetting = function () {
         this.Y -= this.Speed;
         if (this.Y <= -this.Height) {
@@ -184,6 +210,7 @@ var BulletHero = function (planeObject, speed, name) {
             single.removeBullerHero(this);
         }
     };
+
 };
 
 //------------BulletEnemy 类 ----------//
@@ -222,6 +249,7 @@ var GameLoadingFly = function (x, y) {
     };
 };
 
+//------------GameLoadingCopyRight 类 ----------//
 var GameLoadingCopyRight = function (x, y) {
     this.Image = {
         Width: 441,
@@ -231,6 +259,7 @@ var GameLoadingCopyRight = function (x, y) {
     GameLoadingParent.call(this, x, y, this.Image, 'GameLoadingCopyRight');
 };
 
+//------------GameLoadingStart 类 ----------//
 var GameLoadingStart = function (x, y) {
     this.Image = {
         Width: 60,
@@ -267,6 +296,108 @@ var GameLoadingStart = function (x, y) {
     };
 };
 
+//------------BoomParent 类 ----------//
+var BoomParent = function (image, planeObject, name) {
+    this.Image = image;
+    GameObject.call(this, planeObject.X, planeObject.Y, this.Image.Width, this.Image.Height, 0, 0, 'DOWN', name);
+};
+
+var BoomPlaneEnemy = function (type, planeObject, name) {
+    this.Type = type;
+    var planeEnemy1 = [
+		{
+		    Width: 57,
+		    Height: 51,
+		    Url: 'Images/enemy1_down1.png'
+		},
+		{
+		    Width: 57,
+		    Height: 51,
+		    Url: 'Images/enemy1_down2.png'
+		},
+		{
+		    Width: 57,
+		    Height: 51,
+		    Url: 'Images/enemy1_down3.png'
+		}
+    ];
+    var planeEnemy2 = [
+		{
+		    Width: 69,
+		    Height: 95,
+		    Url: 'Images/enemy2_down1.png'
+		},
+		{
+		    Width: 69,
+		    Height: 95,
+		    Url: 'Images/enemy2_down2.png'
+		},
+		{
+		    Width: 69,
+		    Height: 95,
+		    Url: 'Images/enemy2_down3.png'
+		}
+    ];
+    var planeEnemy3 = [
+		{
+		    Width: 165,
+		    Height: 260,
+		    Url: 'Images/enemy3_down1.png'
+		},
+		{
+		    Width: 165,
+		    Height: 260,
+		    Url: 'Images/enemy3_down2.png'
+		},
+		{
+		    Width: 165,
+		    Height: 260,
+		    Url: 'Images/enemy3_down3.png'
+		},
+		{
+		    Width: 165,
+		    Height: 260,
+		    Url: 'Images/enemy3_down4.png'
+		},
+		{
+		    Width: 165,
+		    Height: 260,
+		    Url: 'Images/enemy3_down5.png'
+		}
+    ];
+
+    this.GetImages = function () {
+        switch (this.Type) {
+            case 0:
+                return planeEnemy1;
+                break;
+            case 1:
+                return planeEnemy2;
+                break;
+            case 2:
+                return planeEnemy3;
+                break;
+        }
+        return [];
+    };
+    BoomParent.call(this, this.GetImages(this.Type)[0], planeObject, name);
+    this.Index = 0;
+    this.Draw = function () {
+        this.Index++;
+
+        $('#' + this.Name + '').css({
+            'background': 'url(' + this.GetImages(this.Type)[this.Index] + ')',
+            'z-index': '9999'
+        });
+        if (this.Index >= this.GetImages(this.Type).length) {
+            //销毁飞机
+            this.Index--;
+            this.removeObject();
+            single.removeBoomPlaneEnemy(this);
+
+        }
+    };
+};
 
 ////----------test-------
 //var PH = new PlaneEnemy(78, 87,0);
